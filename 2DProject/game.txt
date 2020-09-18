@@ -1,1 +1,12 @@
-Change
+2D Game Project
+
+Game Concept :
+
+Genre : Stage to Stage and Defeat the Boss
+View : View from Side
+Control : Move(left, right), jump, attack,
+Source : (Image) background, tiles, character, items, enemies, boss, projectiles.
+               (Sound) player attack, player death, jump, enemy attack, enemy death
+               (Other) (font)...
+
+
