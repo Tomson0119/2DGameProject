@@ -1,10 +1,10 @@
 # Game Title
-SlashBit : 2D 공간에서 몬스터를 처치하며 스테이지를 통과하고 보스를 처치하는 짧은 게임입니다.
+__SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과하고 보스를 처치하는 짧은 게임입니다.
 게임 스펠렁키를 보고 아이디어를 생각하였습니다. 장애물과 몬스터의 공격으로부터 제한된 목숨으로 생존하여야 합니다.
 
 ![maxresdefault](https://user-images.githubusercontent.com/70787160/94105678-cac83000-fe74-11ea-85e8-a562335b907b.jpg)
 
-## Game Scene
+# Game Scene
 * Main Menu.
   - 게임 시작 시 나오는 메인메뉴
   - 게임 타이틀과 게임 시작 버튼 (Press Spacebar)을 표시
@@ -31,7 +31,7 @@ SlashBit : 2D 공간에서 몬스터를 처치하며 스테이지를 통과하�
   - Events : UP key, Down key to choose scene(restart, main menu), select scene (spacebar)
   - restart -> time, hp reset.
 
-### Skills
+# Skills
 * 다른 수업에서 배운 기술 : 랜덤함수
 * 2D게임프로그래밍 : 적 AI 구현, 충돌 검사, 시간 측정, 애니메이션, 사운드, 이미지의 페이드 소멸(점점 흐려짐) 등
 * 어려운 기술 : 맵의 타일들을 랜덤하게 재배치하는 기술(출구까지 막힌 길이 없어야 한다), 지진효과(화면이 흔들리는 효과)
