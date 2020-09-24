@@ -5,13 +5,13 @@ __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과�
 ![maxresdefault](https://user-images.githubusercontent.com/70787160/94105678-cac83000-fe74-11ea-85e8-a562335b907b.jpg)
 
 # Game Scene
-* Main Menu.
+* __Main Menu__
   - 게임 시작 시 나오는 메인메뉴
   - 게임 타이틀과 게임 시작 버튼 (Press Spacebar)을 표시
   - Resource : image = background, text(font)
   - Events : Spacebar = change to game state, ESC = exit program.
 
-* Stages (1, 2, 3, Boss)
+* __Stages__ (1, 2, 3, Boss)
   - 게임을 시작하고 나면 진행되는 상태
   - 남은 목숨, 진행 시간, 필드, 몬스터(보스), 발사체, 캐릭터, 아이템(HP up, damage up, speed up), 문(stage end), 시간(timer)
   - Stage end -> 새로운 맵을 로드한다. (보스맵까지 총 4개)
@@ -23,7 +23,7 @@ __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과�
   - HP가 0이 되거나 boss의 HP가 0이 되면 Result page로 변경
   - 몬스터의 위치, 아이템의 위치는 랜덤으로 구현
 
-* Result page (death)
+* __Result page__ (death)
   - 게임에서 죽거나 보스를 물리치고 게임이 끝났을 때 표시해주는 결과창
   - 게임에서 경과한 시간을 표시. 죽어있는 캐릭터의 모습, 재시작, 게임 나가기
   - Restart -> 처음부터 다시시작, back to menu -> 메인메뉴로 돌아가기
