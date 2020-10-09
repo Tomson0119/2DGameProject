@@ -40,9 +40,9 @@ __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과�
 ![게임 흐름](https://user-images.githubusercontent.com/70787160/95533692-d42dcc80-0a1e-11eb-8e10-44960f8c3475.png)
 
 # 개발 범위
-![개발 범위](https://user-images.githubusercontent.com/70787160/95533696-d728bd00-0a1e-11eb-859e-18090835125e.png)
+![제목 없음](https://user-images.githubusercontent.com/70787160/95575331-78d4fc00-0a69-11eb-8216-7671ce4c6391.png)
 
 # 개발 계획
-![개발 계획](https://user-images.githubusercontent.com/70787160/95533699-d8f28080-0a1e-11eb-984b-73d0d964418f.png)
+![q2232](https://user-images.githubusercontent.com/70787160/95575333-796d9280-0a69-11eb-8df5-3cb4aa4003a4.png)
 
 
