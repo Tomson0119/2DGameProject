@@ -36,6 +36,13 @@ __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과�
 * 2D게임프로그래밍 : 적 AI 구현, 충돌 검사, 시간 측정, 애니메이션, 사운드, 이미지의 페이드 소멸(점점 흐려짐) 등
 * 어려운 기술 : 맵의 타일들을 랜덤하게 재배치하는 기술(출구까지 막힌 길이 없어야 한다), 지진효과(화면이 흔들리는 효과)
 
-# Game Image
+# 게임 흐름
+![게임 흐름](https://user-images.githubusercontent.com/70787160/95533692-d42dcc80-0a1e-11eb-8e10-44960f8c3475.png)
+
+# 개발 범위
+![개발 범위](https://user-images.githubusercontent.com/70787160/95533696-d728bd00-0a1e-11eb-859e-18090835125e.png)
+
+# 개발 게획
+![개발 계획](https://user-images.githubusercontent.com/70787160/95533699-d8f28080-0a1e-11eb-984b-73d0d964418f.png)
 
 
