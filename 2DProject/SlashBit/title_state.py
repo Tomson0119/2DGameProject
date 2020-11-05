@@ -1,21 +1,16 @@
 import gfw
 import gobj
 from pico2d import *
+from background import Background
 
-BG_DIR = 'background/forest/'
+BG_DIR = 'background/'
 
 def enter():
-    gfw.world.init(['bg','cloud'])
-    bg = [gobj.ImageObject(BG_DIR + 'forest01.png', (gfw.WINDOW_WIDTH // 2, gfw.WINDOW_HEIGHT // 2)),
-          gobj.ImageObject(BG_DIR + 'forest02.png', (gfw.WINDOW_WIDTH // 2, gfw.WINDOW_HEIGHT // 2)),
-          gobj.ImageObject(BG_DIR + 'forest03.png', (gfw.WINDOW_WIDTH // 2, gfw.WINDOW_HEIGHT // 2))]
-    for obj in bg:
-        gfw.world.add(gfw.layer.bg, obj)
+    gfw.world.init(['bg', 'cloud'])
 
-    cloud = [gobj.ImageObject(BG_DIR + 'forest04.png',(gfw.WINDOW_WIDTH // 2, gfw.WINDOW_HEIGHT - 200)),
-             gobj.ImageObject(BG_DIR + 'forest04.png', (gfw.WINDOW_WIDTH * 3 // 2, gfw.WINDOW_HEIGHT - 200))]
-    for obj in cloud:
-        gfw.world.add(gfw.layer.cloud, obj)
+    for n in range(1,4):
+        bg = Background(BG_DIR + 'forest0%d.png' % n)
+        gfw.world.add(gfw.layer.bg, bg)
 
 
 def update():

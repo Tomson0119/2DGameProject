@@ -1,5 +1,4 @@
 import gfw
-from pico2d import *
 from functools import reduce
 
 objects = []
@@ -76,7 +75,7 @@ def draw():
 
 def update():
     for obj in all_objects():
-        obj.updata()
+        obj.update()
     if len(trashbin) > 0:
         empty_trashbin()
 

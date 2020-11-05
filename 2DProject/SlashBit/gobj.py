@@ -1,7 +1,9 @@
 import gfw
-from pico2d import *
 
 RES_DIR = 'res/'
+
+def res(name):
+    return RES_DIR + name
 
 class ImageObject:
     def __init__(self,name,pos):
@@ -11,6 +13,3 @@ class ImageObject:
         self.image.draw(*self.pos, gfw.WINDOW_WIDTH, gfw.WINDOW_HEIGHT)
     def update(self):
         pass
-
-if __name__ == "__main__":
-    print("This module should not be loaded directly")
