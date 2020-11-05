@@ -9,7 +9,7 @@ def load(file):
 
     image = load_image(file)
     images[file] = image
-    print(file)
+    print("Image Load : " + file)
     return image
 
 def unload(file):
