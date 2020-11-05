@@ -2,6 +2,7 @@ from pico2d import *
 import time
 import gfw.world
 import gfw.image
+import gfw.font
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
