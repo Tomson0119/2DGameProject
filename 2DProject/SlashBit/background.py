@@ -21,13 +21,13 @@ class Background:
 
 
 class HorzScrollBackground:
-    def __init__(self, imageName):
+    def __init__(self, imageName, speed, pos_y):
         self.imageName = imageName
         self.image = gfw.image.load(res(BG_DIR + imageName))
         self.cw = gfw.WINDOW_WIDTH
         self.ch = gfw.WINDOW_HEIGHT
-        self.scroll, self.speed = 0, 0
-        self.pos_y = 0
+        self.scroll, self.speed = 0, speed
+        self.pos_y = pos_y
 
     def draw(self):
         page = self.image.w * self.ch // self.image.h
