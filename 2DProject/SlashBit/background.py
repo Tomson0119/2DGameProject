@@ -2,10 +2,13 @@ import gfw
 from pico2d import *
 from gobj import *
 
+BG_DIR = 'background/'
+
+
 class Background:
     def __init__(self, imageName):
         self.imageName = imageName
-        self.image = gfw.image.load(res(imageName))
+        self.image = gfw.image.load(res(BG_DIR + imageName))
         self.cw = gfw.WINDOW_WIDTH
         self.ch = gfw.WINDOW_HEIGHT
         self.rect = 0, 0, self.image.w, self.image.h
@@ -16,10 +19,11 @@ class Background:
     def update(self):
         pass
 
+
 class HorzScrollBackground:
     def __init__(self, imageName):
         self.imageName = imageName
-        self.image = gfw.image.load(res(imageName))
+        self.image = gfw.image.load(res(BG_DIR + imageName))
         self.cw = gfw.WINDOW_WIDTH
         self.ch = gfw.WINDOW_HEIGHT
         self.scroll, self.speed = 0, 0

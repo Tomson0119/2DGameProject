@@ -3,7 +3,6 @@ import gobj
 from pico2d import *
 from background import Background, HorzScrollBackground
 
-BG_DIR = 'background/'
 
 title = []
 menu = []
@@ -14,10 +13,10 @@ def enter():
     gfw.world.init(['bg', 'cloud', 'ui'])
 
     for n in range(1,4):
-        bg = Background(BG_DIR + 'forest0%d.png' % n)
+        bg = Background('forest0%d.png' % n)
         gfw.world.add(gfw.layer.bg, bg)
 
-    cloud = HorzScrollBackground(BG_DIR + 'cloud.png')
+    cloud = HorzScrollBackground('cloud.png')
     cloud.speed = 20
     cloud.pos_y = 130
     gfw.world.add(gfw.layer.cloud, cloud)
@@ -56,8 +55,6 @@ def draw():
                "exit", color=color)
 
 
-
-
 def handle_event(e):
     global index
     event = (e.type, e.key)
@@ -75,7 +72,6 @@ def handle_event(e):
             gfw.quit()
         else:
             print("game start")
-
 
 
 def exit():
