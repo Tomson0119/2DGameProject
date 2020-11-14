@@ -2,10 +2,8 @@ import gfw
 import gobj
 from pico2d import *
 from background import Background, HorzScrollBackground
+from menu import Menu
 
-
-title = []
-menu = []
 index = 0
 
 
@@ -16,17 +14,24 @@ def enter():
         bg = Background('forest0%d.png' % n)
         gfw.world.add(gfw.layer.bg, bg)
 
-    cloud = HorzScrollBackground('cloud.png')
-    cloud.speed = 20
-    cloud.pos_y = 130
+    cloud = HorzScrollBackground('cloud.png', 20, 130)
     gfw.world.add(gfw.layer.cloud, cloud)
 
-    global title
-    for n in range(2):
-        title.append(gfw.font.load(gobj.res('ThaleahFat.ttf'), 140))
-    for n in range(4):
-        menu.append(gfw.font.load(gobj.res('ThaleahFat.ttf'), 50))
+    color = [(0, 0, 0), (255, 255, 255)]
+    init = [ (140, -270, -10, "slash bit"), (140, -280, 0, "slash bit"),
+             (50, -65, -125, "start"), (50, -70, -120, "start"),
+             (50, -45, -170, "exit"), (50, -50, -165, "exit") ]
 
+    global select1, select2
+    for n, (size, pos_x, pos_y, sent) in zip(range(6), init):
+        menu = Menu('ThaleahFat.ttf', size, color[n % 2],
+                    sent, pos_x, pos_y)
+        gfw.world.add(gfw.layer.ui, menu)
+        if n == 3:
+            select1 = menu
+        if n == 5:
+            select2 = menu
+    select1.color = (255, 0, 0)
 
 def update():
     gfw.world.update()
@@ -34,25 +39,6 @@ def update():
 
 def draw():
     gfw.world.draw()
-    title[0].draw(gfw.WINDOW_WIDTH // 2 - 270, gfw.WINDOW_HEIGHT // 2 - 10,
-                "slash bit", color=(0, 0, 0))
-
-    title[1].draw(gfw.WINDOW_WIDTH // 2 - 280, gfw.WINDOW_HEIGHT // 2,
-                "slash bit", color=(255,255,255))
-
-    menu[0].draw(gfw.WINDOW_WIDTH // 2 - 65, gfw.WINDOW_HEIGHT // 2 - 125,
-                "start", color=(0, 0, 0))
-
-    color = (255, 255, 255) if index == 1 else (255, 0, 0)
-    menu[1].draw(gfw.WINDOW_WIDTH // 2 - 70, gfw.WINDOW_HEIGHT // 2 - 120,
-               "start", color=color)
-
-    menu[2].draw(gfw.WINDOW_WIDTH // 2 - 45, gfw.WINDOW_HEIGHT // 2 - 170,
-               "exit", color=(0, 0, 0))
-
-    color = (255, 255, 255) if index == 0 else (255, 0, 0)
-    menu[3].draw(gfw.WINDOW_WIDTH // 2 - 50, gfw.WINDOW_HEIGHT // 2 - 165,
-               "exit", color=color)
 
 
 def handle_event(e):
@@ -65,8 +51,12 @@ def handle_event(e):
         gfw.quit()
     elif event == (SDL_KEYDOWN, SDLK_UP):
         index = 0
+        select1.color = (255, 0, 0)
+        select2.color = (255, 255, 255)
     elif event == (SDL_KEYDOWN, SDLK_DOWN):
         index = 1
+        select1.color = (255, 255, 255)
+        select2.color = (255, 0, 0)
     elif event == (SDL_KEYDOWN, SDLK_RETURN):
         if index == 1:
             gfw.quit()
