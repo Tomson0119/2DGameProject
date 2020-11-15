@@ -1,8 +1,9 @@
 import gfw
 import gobj
 from pico2d import *
-from background import Background, HorzScrollBackground
+from background import *
 from menu import Menu
+import game_state
 
 index = 0
 
@@ -33,6 +34,7 @@ def enter():
             select2 = menu
     select1.color = (255, 0, 0)
 
+
 def update():
     gfw.world.update()
 
@@ -61,11 +63,11 @@ def handle_event(e):
         if index == 1:
             gfw.quit()
         else:
-            print("game start")
+            gfw.push(game_state)
 
 
 def exit():
-    pass
+    gfw.world.clear_all()
 
 
 def pause():

@@ -4,6 +4,7 @@ from functools import reduce
 objects = []
 trashbin = []
 
+
 def init(layer_names):
     global objects
     objects = []

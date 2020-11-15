@@ -12,9 +12,11 @@ stack = None
 interval = 0.01
 delta_time = 0
 
+
 def quit():
     global running
     running = False
+
 
 def run(start_state):
     global running, stack
@@ -54,12 +56,14 @@ def run(start_state):
 
     close_canvas()
 
+
 def change(state):
     global stack
     if len(stack) > 0:
         stack.pop().exit()
     stack.append(state)
     state.enter()
+
 
 def push(state):
     global stack
@@ -68,6 +72,7 @@ def push(state):
     stack.append(state)
     state.enter()
 
+
 def pop():
     global stack
     size = len(stack)
@@ -75,8 +80,9 @@ def pop():
         quit()
     elif size > 1:
         stack[-1].exit()
-        stack[-1].pop()
-        stack[-1].resume()
+        stack.pop()
+        stack[-1].enter()
+
 
 def run_main():
     import sys
