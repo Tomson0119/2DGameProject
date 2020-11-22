@@ -2,7 +2,7 @@
 __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과하고 보스를 처치하는 짧은 게임입니다.
 게임 스펠렁키를 보고 아이디어를 생각하였습니다. 장애물과 몬스터의 공격으로부터 제한된 목숨으로 생존하여야 합니다.
 
-![maxresdefault](https://user-images.githubusercontent.com/70787160/94105678-cac83000-fe74-11ea-85e8-a562335b907b.jpg)
+![image](https://user-images.githubusercontent.com/70787160/99893430-8d8cec80-2cc3-11eb-9dc9-41f23795fb32.png)
 
 # Game Scene
 * __Main Menu__
