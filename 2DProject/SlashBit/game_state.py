@@ -6,7 +6,7 @@ from player import Player
 
 
 def enter():
-    gfw.world.init(['bg', 'cloud', 'player', 'tile', 'enemy', 'item'])
+    gfw.world.init(['bg', 'cloud', 'player', 'tile', 'enemy', 'item', 'ui'])
 
     for n in range(1,4):
         bg = Background('forest0%d.png' % n)
@@ -41,14 +41,6 @@ def handle_event(e):
 
 def exit():
     gfw.world.clear_all()
-
-
-def pause():
-    pass
-
-
-def resume():
-    pass
 
 
 if __name__ == "__main__":

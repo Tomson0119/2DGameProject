@@ -70,13 +70,5 @@ def exit():
     gfw.world.clear_all()
 
 
-def pause():
-    pass
-
-
-def resume():
-    pass
-
-
 if __name__ == "__main__":
     gfw.run_main()
