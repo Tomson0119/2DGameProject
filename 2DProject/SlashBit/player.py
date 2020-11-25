@@ -24,7 +24,6 @@ class IdleState:
     def enter(self):
         self.time = 0
         self.anim = 0
-        self.player.delta = 0, 0
 
     def exit(self):
         pass
