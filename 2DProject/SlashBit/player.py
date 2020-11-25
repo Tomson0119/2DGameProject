@@ -6,6 +6,8 @@ CH_DIR = 'character/'
 
 
 class IdleState:
+    BB_RECT = (-33, -48, 33, 43)
+
     @staticmethod
     def get(player):
         if not hasattr(IdleState, 'singleton'):
@@ -17,7 +19,7 @@ class IdleState:
         self.player = None
         self.time = 0
         self.anim = 0
-        self.move_speed = 2
+        self.move_speed = 10
         self.left_pressed = False
         self.right_pressed = False
 
@@ -47,7 +49,7 @@ class IdleState:
             self.player.set_state(JumpState)
         elif pair == (SDL_KEYDOWN, SDLK_DOWN):
             self.player.set_state(CrouchState)
-        elif pair == (SDL_KEYDOWN, SDLK_LSHIFT):
+        elif pair == (SDL_KEYDOWN, SDLK_z):
             self.player.set_state(AttackState)
 
     def update(self):
@@ -59,7 +61,7 @@ class IdleState:
         elif self.player.delta[0] < 0 and not self.left_pressed:
             self.player.delta = point_add(self.player.delta, (1, 0))
 
-        move_obj(self.player, self.move_speed * 2)
+        move_obj(self.player, self.move_speed)
 
         frame = self.time * 10
         if self.player.delta[0] != 0:
@@ -68,24 +70,20 @@ class IdleState:
             self.anim = 0
 
     def draw(self):
-        width, height = 72, 72
-        sx = self.anim * width
-        sy = 0
-
+        index = 0
         if self.player.delta[0] != 0:
-            sy = 2 * height
+            index = 2
         if self.player.delta[0] < 0:
             self.player.isLeft = True
         elif self.player.delta[0] > 0:
             self.player.isLeft = False
 
-        if self.player.isLeft:
-            self.player.image.clip_composite_draw(sx, sy, width, height, 0, 'h', *self.player.pos, 216, 216)
-        else:
-            self.player.image.clip_draw(sx, sy, width, height, *self.player.pos, 216, 216)
+        self.player.draw_ex(self.anim, index)
 
 
 class JumpState:
+    BB_RECT = (-31, -48, 35, 49)
+
     @staticmethod
     def get(player):
         if not hasattr(JumpState, 'singleton'):
@@ -97,8 +95,7 @@ class JumpState:
         self.player = None
         self.time = 0
         self.anim = 0
-        self.move_speed = 2
-        self.jump_speed = 15
+        self.jump_speed = 25
 
     def enter(self):
         self.time = 0
@@ -124,7 +121,7 @@ class JumpState:
         x, y = self.player.pos
         dx, dy = self.player.delta
         if y >= 100:
-            dy -= 1
+            dy -= 2
         else:
             y = 100
             dy = 0
@@ -133,24 +130,19 @@ class JumpState:
         self.player.pos = x, y
         self.player.delta = dx, dy
 
-        move_obj(self.player, 4)
+        move_obj(self.player, 10)
 
         frame = self.time * 20
         if self.anim < 3:
             self.anim = int(frame) % 4
 
     def draw(self):
-        width, height = 72, 72
-        sx = self.anim * width
-        sy = 4 * height
-
-        if self.player.isLeft:
-            self.player.image.clip_composite_draw(sx, sy, width, height, 0, 'h', *self.player.pos, 216, 216)
-        else:
-            self.player.image.clip_draw(sx, sy, width, height, *self.player.pos, 216, 216)
+        self.player.draw_ex(self.anim, 4)
 
 
 class CrouchState:
+    BB_RECT = (-27, -48, 39, 28)
+
     @staticmethod
     def get(player):
         if not hasattr(CrouchState, 'singleton'):
@@ -176,6 +168,12 @@ class CrouchState:
         if pair == (SDL_KEYUP, SDLK_DOWN):
             self.player.set_state(IdleState)
 
+        state = IdleState.get(self.player)
+        if pair == (SDL_KEYUP, SDLK_RIGHT):
+            state.right_pressed = False
+        elif pair == (SDL_KEYUP, SDLK_LEFT):
+            state.left_pressed = False
+
     def update(self):
         self.time += gfw.delta_time
 
@@ -184,17 +182,12 @@ class CrouchState:
             self.anim = int(frame) % 2
 
     def draw(self):
-        width, height = 72, 72
-        sx = self.anim * width
-        sy = 1 * height
-
-        if self.player.isLeft:
-            self.player.image.clip_composite_draw(sx, sy, width, height, 0, 'h', *self.player.pos, 216, 216)
-        else:
-            self.player.image.clip_draw(sx, sy, width, height, *self.player.pos, 216, 216)
+        self.player.draw_ex(self.anim, 1)
 
 
 class AttackState:
+    BB_RECT = (-27, -48, 100, 40)
+
     @staticmethod
     def get(player):
         if not hasattr(AttackState, 'singleton'):
@@ -220,24 +213,18 @@ class AttackState:
     def update(self):
         self.time += gfw.delta_time
 
-        if self.anim < 2:
-            frame = self.time * 10
-            self.anim = int(frame) % 3
-        else:
+        frame = self.time * 10
+        self.anim = int(frame) % 4
+        if self.anim == 3:
             self.player.set_state(IdleState)
 
     def draw(self):
-        width, height = 72, 72
-        sx = self.anim * width
-        sy = 3 * height
-
-        if self.player.isLeft:
-            self.player.image.clip_composite_draw(sx, sy, width, height, 0, 'h', *self.player.pos, 216, 216)
-        else:
-            self.player.image.clip_draw(sx, sy, width, height, *self.player.pos, 216, 216)
+        self.player.draw_ex(self.anim, 3)
 
 
 class DeathState:
+    BB_RECT = (0, 0, 0, 0)
+
     @staticmethod
     def get(player):
         if not hasattr(DeathState, 'singleton'):
@@ -284,14 +271,7 @@ class DeathState:
         self.player.delta = dx, dy
 
     def draw(self):
-        width, height = 72, 72
-        sx = self.anim * width
-        sy = 5 * height
-
-        if self.player.isLeft:
-            self.player.image.clip_composite_draw(sx, sy, width, height, 0, 'h', *self.player.pos, 216, 216)
-        else:
-            self.player.image.clip_draw(sx, sy, width, height, *self.player.pos, 216, 216)
+        self.player.draw_ex(self.anim, 5)
 
 
 class Player:
@@ -301,6 +281,7 @@ class Player:
         self.set_state(IdleState)
         self.pos = 100, 100
         self.delta = 0, 0
+        self.size = 72
         self.isLeft = False
         self.life = 5
 
@@ -324,3 +305,23 @@ class Player:
 
     def draw(self):
         self.state.draw()
+
+    def draw_ex(self, anim, index):
+        sx = anim * self.size
+        sy = index * self.size
+
+        if self.isLeft:
+            self.image.clip_composite_draw(sx, sy, self.size, self.size,
+                                           0, 'h', *self.pos, self.size * 3, self.size * 3)
+        else:
+            self.image.clip_draw(sx, sy, self.size, self.size,
+                                 *self.pos, self.size * 3, self.size * 3)
+
+    def get_bb(self):
+        x, y = self.pos
+        l, b, r, t = self.state.BB_RECT
+        if self.isLeft:
+            l *= -1
+            r *= -1
+        bb = x + l, y + b, x + r, y + t
+        return bb

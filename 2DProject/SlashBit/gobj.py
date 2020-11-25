@@ -18,13 +18,18 @@ def move_obj(obj, speed_x=1, speed_y=1):
     obj.pos = point_add(obj.pos, obj.delta, speed_x, speed_y)
 
 
+def draw_collision_box():
+    for obj in gfw.world.all_objects():
+        if hasattr(obj, 'get_bb'):
+            draw_rectangle(*obj.get_bb())
+
 class ImageObject:
     def __init__(self, name, pos):
         self.image = gfw.image.load(RES_DIR + name)
         self.pos = pos
 
     def draw(self):
-        self.image.draw(*self.pos, gfw.WINDOW_WIDTH, gfw.WINDOW_HEIGHT)
+        self.image.draw(*self.pos)
 
     def update(self):
         pass

@@ -3,10 +3,12 @@ import gobj
 from pico2d import *
 from background import *
 from player import Player
+import stage_gen
 
+STAGE_GEN = True
 
 def enter():
-    gfw.world.init(['bg', 'cloud', 'player', 'tile', 'enemy', 'item', 'ui'])
+    gfw.world.init(['bg', 'cloud', 'tile', 'item', 'player', 'enemy', 'ui'])
 
     for n in range(1,4):
         bg = Background('forest0%d.png' % n)
@@ -19,13 +21,20 @@ def enter():
     player = Player()
     gfw.world.add(gfw.layer.player, player)
 
+    stage_gen.load(res('stage_01.txt'))
+
 
 def update():
+    global STAGE_GEN
     gfw.world.update()
+    dx = -250 * gfw.delta_time
+    if STAGE_GEN:
+        STAGE_GEN = stage_gen.update(dx)
 
 
 def draw():
     gfw.world.draw()
+    gobj.draw_collision_box()
 
 
 def handle_event(e):
