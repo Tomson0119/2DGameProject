@@ -45,7 +45,7 @@ class IdleState:
             self.right_pressed = False
 
         elif pair == (SDL_KEYDOWN, SDLK_UP):
-            self.player.set_state(JumpState)
+            self.player.delta = point_add(self.player.delta, (0, self.player.jump_speed))
         elif pair == (SDL_KEYDOWN, SDLK_DOWN):
             self.player.set_state(CrouchState)
         elif pair == (SDL_KEYDOWN, SDLK_z):
@@ -84,41 +84,6 @@ class IdleState:
             self.player.isLeft = False
 
         self.player.draw_ex(self.anim, index)
-
-
-class JumpState:
-    BB_RECT = (-31, -48, 35, 49)
-
-    @staticmethod
-    def get(player):
-        if not hasattr(JumpState, 'singleton'):
-            JumpState.singleton = JumpState()
-            JumpState.singleton.player = player
-        return JumpState.singleton
-
-    def __init__(self):
-        self.player = None
-        self.time = 0
-        self.anim = 0
-        self.jump_speed = 15
-
-    def enter(self):
-        self.time = 0
-        self.anim = 0
-        self.player.delta = point_add(self.player.delta, (0, self.jump_speed))
-        move_obj(self.player, self.player.move_speed)
-
-    def exit(self):
-        pass
-
-    def handle_event(self, e):
-        pass
-
-    def update(self):
-        pass
-
-    def draw(self):
-        pass
 
 
 class CrouchState:
@@ -336,6 +301,7 @@ class Player:
         self.pos = 100, 200
         self.delta = 0, 0
         self.move_speed = 6
+        self.jump_speed = 15
         self.size = 72
         self.isLeft = False
         self.life = 5
