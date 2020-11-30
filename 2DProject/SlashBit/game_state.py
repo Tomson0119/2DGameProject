@@ -2,7 +2,7 @@ import gfw
 import gobj
 from pico2d import *
 from background import *
-from player_v2 import Player
+from player import Player
 import stage_gen
 
 STAGE_GEN = True

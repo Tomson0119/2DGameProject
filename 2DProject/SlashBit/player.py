@@ -31,10 +31,10 @@ class IdleState:
 
     def handle_event(self, e):
         pair = (e.type, e.key)
-        if pair == (SDL_KEYDOWN, SDLK_LEFT):
+        if pair == (SDL_KEYDOWN, SDLK_LEFT) and not self.left_pressed:
             self.player.delta = point_add(self.player.delta, (-1, 0))
             self.left_pressed = True
-        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
+        elif pair == (SDL_KEYDOWN, SDLK_RIGHT) and not self.right_pressed:
             self.player.delta = point_add(self.player.delta, (1, 0))
             self.right_pressed = True
         elif pair == (SDL_KEYUP, SDLK_LEFT) and self.left_pressed:
@@ -51,17 +51,19 @@ class IdleState:
         elif pair == (SDL_KEYDOWN, SDLK_z):
             self.player.set_state(AttackState)
 
-        key_state = SDL_GetKeyboardState(None)
-        if key_state[SDL_SCANCODE_LEFT]:
-            print("left")
-
     def update(self):
         self.time += gfw.delta_time
 
         # Delta Error Fix
-        if self.player.delta[0] > 0 and not self.right_pressed:
+        dx = self.player.delta[0]
+        if dx > 0 and not self.right_pressed:
             self.player.delta = point_add(self.player.delta, (-1, 0))
-        elif self.player.delta[0] < 0 and not self.left_pressed:
+        if dx < 0 and not self.left_pressed:
+            self.player.delta = point_add(self.player.delta, (1, 0))
+
+        if dx == 0 and self.left_pressed:
+            self.player.delta = point_add(self.player.delta, (-1, 0))
+        if dx == 0 and self.right_pressed:
             self.player.delta = point_add(self.player.delta, (1, 0))
 
         move_obj(self.player, self.player.move_speed)
@@ -110,13 +112,7 @@ class JumpState:
         pass
 
     def handle_event(self, e):
-        pair = (e.type, e.key)
-
-        state = IdleState.get(self.player)
-        if pair == (SDL_KEYUP, SDLK_RIGHT):
-            state.right_pressed = False
-        elif pair == (SDL_KEYUP, SDLK_LEFT):
-            state.left_pressed = False
+        pass
 
     def update(self):
         pass
@@ -159,6 +155,11 @@ class CrouchState:
         elif pair == (SDL_KEYUP, SDLK_LEFT):
             state.left_pressed = False
 
+        if pair == (SDL_KEYDOWN, SDLK_LEFT):
+            state.left_pressed = True
+        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
+            state.right_pressed = True
+
     def update(self):
         self.time += gfw.delta_time
 
@@ -193,7 +194,17 @@ class AttackState:
         pass
 
     def handle_event(self, e):
-        pass
+        pair = (e.type, e.key)
+        state = IdleState.get(self.player)
+        if pair == (SDL_KEYUP, SDLK_RIGHT):
+            state.right_pressed = False
+        elif pair == (SDL_KEYUP, SDLK_LEFT):
+            state.left_pressed = False
+
+        if pair == (SDL_KEYDOWN, SDLK_LEFT):
+            state.left_pressed = True
+        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
+            state.right_pressed = True
 
     def update(self):
         self.time += gfw.delta_time
@@ -288,6 +299,11 @@ class FallingState:
             state.right_pressed = False
         elif pair == (SDL_KEYUP, SDLK_LEFT):
             state.left_pressed = False
+
+        if pair == (SDL_KEYDOWN, SDLK_LEFT):
+            state.left_pressed = True
+        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
+            state.right_pressed = True
 
     def update(self):
         self.time += gfw.delta_time
