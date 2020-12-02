@@ -23,6 +23,7 @@ def draw_collision_box():
         if hasattr(obj, 'get_bb'):
             draw_rectangle(*obj.get_bb())
 
+
 class ImageObject:
     def __init__(self, name, pos):
         self.image = gfw.image.load(RES_DIR + name)

@@ -1,6 +1,7 @@
 from pico2d import *
 import gfw
 from gobj import *
+from collision_check import *
 
 CH_DIR = 'character/'
 
@@ -19,8 +20,10 @@ class IdleState:
         self.player = None
         self.time = 0
         self.anim = 0
+        self.jump_speed = 15
         self.left_pressed = False
         self.right_pressed = False
+        self.bound_right = False
 
     def enter(self):
         self.time = 0
@@ -32,20 +35,20 @@ class IdleState:
     def handle_event(self, e):
         pair = (e.type, e.key)
         if pair == (SDL_KEYDOWN, SDLK_LEFT) and not self.left_pressed:
-            self.player.delta = point_add(self.player.delta, (-1, 0))
+            self.move_delta(-1)
             self.left_pressed = True
         elif pair == (SDL_KEYDOWN, SDLK_RIGHT) and not self.right_pressed:
-            self.player.delta = point_add(self.player.delta, (1, 0))
+            self.move_delta(1)
             self.right_pressed = True
         elif pair == (SDL_KEYUP, SDLK_LEFT) and self.left_pressed:
-            self.player.delta = point_add(self.player.delta, (1, 0))
+            self.move_delta(1)
             self.left_pressed = False
         elif pair == (SDL_KEYUP, SDLK_RIGHT) and self.right_pressed:
-            self.player.delta = point_add(self.player.delta, (-1, 0))
+            self.move_delta(-1)
             self.right_pressed = False
 
         elif pair == (SDL_KEYDOWN, SDLK_UP):
-            self.player.delta = point_add(self.player.delta, (0, self.player.jump_speed))
+            self.move_delta(0, self.jump_speed)
         elif pair == (SDL_KEYDOWN, SDLK_DOWN):
             self.player.set_state(CrouchState)
         elif pair == (SDL_KEYDOWN, SDLK_z):
@@ -54,25 +57,34 @@ class IdleState:
     def update(self):
         self.time += gfw.delta_time
 
-        # Delta Error Fix
-        dx = self.player.delta[0]
-        if dx > 0 and not self.right_pressed:
-            self.player.delta = point_add(self.player.delta, (-1, 0))
-        if dx < 0 and not self.left_pressed:
-            self.player.delta = point_add(self.player.delta, (1, 0))
-
-        if dx == 0 and self.left_pressed:
-            self.player.delta = point_add(self.player.delta, (-1, 0))
-        if dx == 0 and self.right_pressed:
-            self.player.delta = point_add(self.player.delta, (1, 0))
-
-        move_obj(self.player, self.player.move_speed)
-
         frame = self.time * 10
         if self.player.delta[0] != 0:
             self.anim = int(frame) % 8
         else:
             self.anim = 0
+
+        self.delta_error_fix()
+
+        # check boundary with tiles
+        check_right(self.player)
+        check_left(self.player)
+
+        move_obj(self.player, self.player.move_speed)
+
+    def delta_error_fix(self):
+        # Delta Error Fix
+        dx = self.player.delta[0]
+        if (dx > 0 and not self.right_pressed) or \
+                (dx == 0 and self.left_pressed) or \
+                (dx == 2):
+            self.move_delta(-1)
+        if (dx < 0 and not self.left_pressed) or \
+                (dx == 0 and self.right_pressed) or \
+                (dx == -2):
+            self.move_delta(1)
+
+    def move_delta(self, dx=0, dy=0):
+        self.player.delta = point_add(self.player.delta, (dx, dy))
 
     def draw(self):
         index = 0
@@ -109,21 +121,9 @@ class CrouchState:
         pass
 
     def handle_event(self, e):
-        pair = (e.type, e.key)
-
-        if pair == (SDL_KEYUP, SDLK_DOWN):
+        self.player.handle_event_ex(e)
+        if (e.type, e.key) == (SDL_KEYUP, SDLK_DOWN):
             self.player.set_state(IdleState)
-
-        state = IdleState.get(self.player)
-        if pair == (SDL_KEYUP, SDLK_RIGHT):
-            state.right_pressed = False
-        elif pair == (SDL_KEYUP, SDLK_LEFT):
-            state.left_pressed = False
-
-        if pair == (SDL_KEYDOWN, SDLK_LEFT):
-            state.left_pressed = True
-        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
-            state.right_pressed = True
 
     def update(self):
         self.time += gfw.delta_time
@@ -159,17 +159,7 @@ class AttackState:
         pass
 
     def handle_event(self, e):
-        pair = (e.type, e.key)
-        state = IdleState.get(self.player)
-        if pair == (SDL_KEYUP, SDLK_RIGHT):
-            state.right_pressed = False
-        elif pair == (SDL_KEYUP, SDLK_LEFT):
-            state.left_pressed = False
-
-        if pair == (SDL_KEYDOWN, SDLK_LEFT):
-            state.left_pressed = True
-        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
-            state.right_pressed = True
+        self.player.handle_event_ex(e)
 
     def update(self):
         self.time += gfw.delta_time
@@ -184,7 +174,7 @@ class AttackState:
 
 
 class DeathState:
-    BB_RECT = (0, 0, 0, 0)
+    BB_RECT = (-55, -50, 35, 4)
 
     @staticmethod
     def get(player):
@@ -201,7 +191,6 @@ class DeathState:
     def enter(self):
         self.time = 0
         self.anim = 0
-
         move_back = 2 if self.player.isLeft else -2
         self.player.delta = point_add(self.player.delta, (move_back, 0))
 
@@ -213,23 +202,20 @@ class DeathState:
 
     def update(self):
         self.time += gfw.delta_time
-
-        x, y = self.player.pos
-        dx, dy = self.player.delta
-        if y > 100:
-            dy -= 1
-        else:
-            y = 100
-            dy = 0
-            self.player.pos = x, y
-        move_obj(self.player, 4)
-
+        frame = self.time * 10
         if self.anim < 4:
-            frame = self.time * 10
             self.anim = int(frame) % 5
-        elif self.player.pos[1] <= 100:
-            dx = 0
+
+        dx, dy = self.player.delta
+        dy -= 1
+        if dx < 0:
+            dx += 0.1
+        elif dx > 0:
+            dx -= 0.1
         self.player.delta = dx, dy
+        move_obj(self.player, self.player.move_speed)
+
+        self.player.check_blew()
 
     def draw(self):
         self.player.draw_ex(self.anim, 5)
@@ -257,18 +243,7 @@ class FallingState:
         pass
 
     def handle_event(self, e):
-        pair = (e.type, e.key)
-
-        state = IdleState.get(self.player)
-        if pair == (SDL_KEYUP, SDLK_RIGHT):
-            state.right_pressed = False
-        elif pair == (SDL_KEYUP, SDLK_LEFT):
-            state.left_pressed = False
-
-        if pair == (SDL_KEYDOWN, SDLK_LEFT):
-            state.left_pressed = True
-        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
-            state.right_pressed = True
+        self.player.handle_event_ex(e)
 
     def update(self):
         self.time += gfw.delta_time
@@ -278,15 +253,13 @@ class FallingState:
         self.player.delta = dx, dy
         move_obj(self.player, self.player.move_speed)
 
-        _, foot, _, _ = self.player.get_bb()
-        x, y = self.player.pos
-        if foot <= self.player.selected_t:
-            print(self.player.selected_t)
-            dy = 0
-            y = self.player.selected_t + (self.player.pos[1] - foot)
-            # y = self.player.selected_t
-            self.player.pos = x, y
-            self.player.delta = dx, dy
+        # collision check with tiles
+        check_blew(self.player)
+        check_left(self.player)
+        check_right(self.player)
+        check_above(self.player)
+
+        if check_blew(self.player):
             self.player.set_state(IdleState)
 
     def draw(self):
@@ -301,11 +274,10 @@ class Player:
         self.pos = 100, 200
         self.delta = 0, 0
         self.move_speed = 6
-        self.jump_speed = 15
         self.size = 72
         self.isLeft = False
         self.life = 5
-        self.selected_t = 0
+        self.tile_bound = -100, -100, -100, -100
 
     def set_state(self, clazz):
         if self.state is not None:
@@ -319,6 +291,20 @@ class Player:
         if (e.type, e.key) == (SDL_KEYDOWN, SDLK_y):
             self.life -= 1
 
+    def handle_event_ex(self, e):
+        pair = (e.type, e.key)
+
+        state = IdleState.get(self)
+        if pair == (SDL_KEYUP, SDLK_RIGHT):
+            state.right_pressed = False
+        elif pair == (SDL_KEYUP, SDLK_LEFT):
+            state.left_pressed = False
+
+        if pair == (SDL_KEYDOWN, SDLK_LEFT):
+            state.left_pressed = True
+        elif pair == (SDL_KEYDOWN, SDLK_RIGHT):
+            state.right_pressed = True
+
     def update(self):
         self.state.update()
         if self.life == 0:
@@ -326,10 +312,11 @@ class Player:
             self.set_state(DeathState)
 
         left, foot, right, _ = self.get_bb()
-        t = self.get_below_tile_top()
-        if foot > t:
-            self.selected_t = t
-            self.set_state(FallingState)
+        self.tile_bound = get_collision_bound(self.pos)
+
+        if foot > self.tile_bound[3]:
+            if self.life > 0:
+                self.set_state(FallingState)
 
     def draw(self):
         self.state.draw()
@@ -347,46 +334,10 @@ class Player:
 
     def get_bb(self):
         x, y = self.pos
-        l, b, r, t = self.state.BB_RECT
+        left, bottom, right, top = self.state.BB_RECT
         if self.isLeft:
-            l *= -1
-            r *= -1
-        bb = x + l, y + b, x + r, y + t
+            left *= -1
+            right *= -1
+            left, right = right, left
+        bb = x + left, y + bottom, x + right, y + top
         return bb
-
-    def get_below_tile_top(self):
-        selected = None
-        sel_top = 0
-        x, y = self.pos
-
-        for tile in gfw.world.objects_at(gfw.layer.tile):
-            l, b, r, t = tile.get_bb()
-            if l <= x <= r and y > t:
-                if selected is None:
-                    selected = tile
-                    sel_top = t
-                else:
-                    if t > sel_top:
-                        selected = tile
-                        sel_top = t
-        if selected is not None:
-            _, _, _, ret = selected.get_bb()
-        else:
-            ret = -100
-        return ret
-
-    def get_left_tile_right(self):
-        selected = None
-        sel_right = 0
-        x, y = self.pos
-
-        for tile in gfw.world.objects_at(gfw.layer.tile):
-            l, b, r, t = tile.get_bb()
-            if b <= y <= t and x > r :
-                selected = tile
-                sel_top = t
-        if selected is not None:
-            _, _, _, ret = selected.get_bb()
-        else:
-            ret = -100
-        return ret
