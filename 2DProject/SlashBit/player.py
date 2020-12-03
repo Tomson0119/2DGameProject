@@ -20,10 +20,9 @@ class IdleState:
         self.player = None
         self.time = 0
         self.anim = 0
-        self.jump_speed = 15
+        self.jump_speed = 16
         self.left_pressed = False
         self.right_pressed = False
-        self.bound_right = False
 
     def enter(self):
         self.time = 0
@@ -154,9 +153,10 @@ class AttackState:
     def enter(self):
         self.time = 0
         self.anim = 0
+        self.player.Attack = True
 
     def exit(self):
-        pass
+        self.player.Attack = False
 
     def handle_event(self, e):
         self.player.handle_event_ex(e)
@@ -188,34 +188,47 @@ class DeathState:
         self.time = 0
         self.anim = 0
 
-    def enter(self):
+    def enter(self, collision=0):
         self.time = 0
         self.anim = 0
-        move_back = 2 if self.player.isLeft else -2
-        self.player.delta = point_add(self.player.delta, (move_back, 0))
+        collision *= -3
+        self.player.delta = point_add(self.player.delta, (collision, 0))
 
     def exit(self):
-        pass
+        dx, dy = self.player.delta
+        dx = 0
+        self.player.delta = dx, dy
 
     def handle_event(self, e):
-        pass
+        self.player.handle_event_ex(e)
 
     def update(self):
         self.time += gfw.delta_time
         frame = self.time * 10
-        if self.anim < 4:
+
+        max_index = 1 if self.player.life > 0 else 4
+        if self.anim < max_index:
             self.anim = int(frame) % 5
 
         dx, dy = self.player.delta
         dy -= 1
-        if dx < 0:
+        if dx <= -0.1:
             dx += 0.1
-        elif dx > 0:
+        elif dx >= 0.1:
             dx -= 0.1
+        else:
+            dx = 0
+            if self.player.life > 0:
+                self.player.set_state(IdleState)
+
         self.player.delta = dx, dy
+
         move_obj(self.player, self.player.move_speed)
 
-        self.player.check_blew()
+        check_below(self.player)
+        check_left(self.player)
+        check_right(self.player)
+        check_above(self.player)
 
     def draw(self):
         self.player.draw_ex(self.anim, 5)
@@ -254,12 +267,12 @@ class FallingState:
         move_obj(self.player, self.player.move_speed)
 
         # collision check with tiles
-        check_blew(self.player)
+        check_below(self.player)
         check_left(self.player)
         check_right(self.player)
         check_above(self.player)
 
-        if check_blew(self.player):
+        if check_below(self.player):
             self.player.set_state(IdleState)
 
     def draw(self):
@@ -271,13 +284,16 @@ class Player:
         self.image = gfw.image.load(res(CH_DIR + 'soldier_animation_sheet.png'))
         self.state = None
         self.set_state(IdleState)
-        self.pos = 100, 200
+        self.pos = 200, 200
         self.delta = 0, 0
         self.move_speed = 6
         self.size = 72
         self.isLeft = False
         self.life = 5
-        self.tile_bound = -100, -100, -100, -100
+        self.tile_bound = 0, -100, -100, -100
+        self.strength = 1
+        self.Attack = False
+        self.attacked = False
 
     def set_state(self, clazz):
         if self.state is not None:
@@ -287,9 +303,6 @@ class Player:
 
     def handle_event(self, e):
         self.state.handle_event(e)
-
-        if (e.type, e.key) == (SDL_KEYDOWN, SDLK_y):
-            self.life -= 1
 
     def handle_event_ex(self, e):
         pair = (e.type, e.key)
@@ -307,13 +320,9 @@ class Player:
 
     def update(self):
         self.state.update()
-        if self.life == 0:
-            self.life -= 1
-            self.set_state(DeathState)
 
         left, foot, right, _ = self.get_bb()
         self.tile_bound = get_collision_bound(self.pos)
-
         if foot > self.tile_bound[3]:
             if self.life > 0:
                 self.set_state(FallingState)
@@ -341,3 +350,34 @@ class Player:
             left, right = right, left
         bb = x + left, y + bottom, x + right, y + top
         return bb
+
+    def set_attacked(self, value, collision=0):
+        self.attacked = value
+        if not value:
+            return
+        self.set_state(DeathState)
+        self.state.enter(collision)
+
+    def stepped_on(self):
+        self.delta = point_add(self.delta, (0, 20))
+
+    def increase_life(self):
+        if self.life < 10:
+            self.life += 1
+
+    def decrease_life(self, death=False):
+        if self.life > 0:
+            if death:
+                self.life = 0
+            else:
+                self.life -= 1
+
+    def increase_strength(self):
+        if self.strength < 5:
+            self.strength += 1
+
+    def increase_speed(self):
+        if self.move_speed < 10:
+            self.move_speed += 1
+
+
