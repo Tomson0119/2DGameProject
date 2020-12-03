@@ -25,12 +25,15 @@ def draw_collision_box():
 
 
 class ImageObject:
-    def __init__(self, name, pos):
+    def __init__(self, name, pos, size):
         self.image = gfw.image.load(RES_DIR + name)
         self.pos = pos
+        self.size = size
 
-    def draw(self):
-        self.image.draw(*self.pos)
+    def draw(self, width=0):
+        x, y = self.pos
+        x += width
+        self.image.draw(x, y, self.size, self.size)
 
     def update(self):
         pass
