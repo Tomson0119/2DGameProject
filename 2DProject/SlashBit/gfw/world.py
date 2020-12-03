@@ -62,7 +62,7 @@ def empty_trashbin():
     for trash in trashbin:
         for layer_objects in objects:
             try:
-                pass
+                layer_objects.remove(trash)
             except ValueError:
                 pass
     trashbin = []
