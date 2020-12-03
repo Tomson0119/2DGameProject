@@ -40,6 +40,7 @@ class IdleState:
             self.right_pressed = False
 
         elif pair == (SDL_KEYDOWN, SDLK_UP):
+            self.player.jump_music.play()
             self.move_delta(0, self.jump_speed)
         elif pair == (SDL_KEYDOWN, SDLK_DOWN):
             self.player.set_state(self.player.crouch)
@@ -133,6 +134,7 @@ class AttackState:
         self.time = 0
         self.anim = 0
         self.player.Attacking = True
+        self.player.attack_music.play()
 
     def exit(self):
         self.player.Attacking = False
@@ -163,6 +165,7 @@ class DeathState:
     def enter(self, collision=0):
         self.time = 0
         self.anim = 0
+        self.player.attacked_music.play()
         collision *= -3
         self.player.delta = point_add(self.player.delta, (collision, 0))
 
@@ -264,6 +267,17 @@ class Player:
         self.Attacking = False
         self.attacked = False
         self.active = True
+        self.init_music()
+
+    def init_music(self):
+        self.attack_music = load_wav(res('sound/attack.wav'))
+        self.attacked_music = load_wav(res('sound/attacked.wav'))
+        self.jump_music = load_wav(res('sound/jump.wav'))
+        self.interactive_music = load_wav(res('sound/item.wav'))
+        self.attack_music.set_volume(5)
+        self.attacked_music.set_volume(5)
+        self.jump_music.set_volume(3)
+        self.interactive_music.set_volume(3)
 
     def set_state(self, clazz):
         if self.state is not None:
@@ -343,6 +357,7 @@ class Player:
 
     def increase_life(self):
         if self.life < 10:
+            self.interactive_music.play()
             self.life += 1
 
     def decrease_life(self, death=False):
@@ -354,10 +369,12 @@ class Player:
 
     def increase_strength(self):
         if self.strength < 5:
+            self.interactive_music.play()
             self.strength += 1
 
     def increase_speed(self):
         if self.move_speed < 10:
+            self.interactive_music.play()
             self.move_speed += 1
 
     def move(self, dx):

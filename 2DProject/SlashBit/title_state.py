@@ -34,6 +34,14 @@ def enter():
             select2 = menu
     select1.color = (255, 0, 0)
 
+    global bg_music, menu_music
+    bg_music = load_wav(res('sound/title_bgm.wav'))
+    menu_music = load_wav(res('sound/menu.wav'))
+
+    bg_music.set_volume(10)
+    bg_music.repeat_play()
+    menu_music.set_volume(10)
+
 
 def update():
     gfw.world.update()
@@ -44,7 +52,7 @@ def draw():
 
 
 def handle_event(e):
-    global index
+    global index, menu_music
     event = (e.type, e.key)
 
     if e.type == SDL_QUIT:
@@ -52,10 +60,12 @@ def handle_event(e):
     elif event == (SDL_KEYDOWN, SDLK_ESCAPE):
         gfw.quit()
     elif event == (SDL_KEYDOWN, SDLK_UP):
+        menu_music.play()
         index = 0
         select1.color = (255, 0, 0)
         select2.color = (255, 255, 255)
     elif event == (SDL_KEYDOWN, SDLK_DOWN):
+        menu_music.play()
         index = 1
         select1.color = (255, 255, 255)
         select2.color = (255, 0, 0)
@@ -68,7 +78,10 @@ def handle_event(e):
 
 def exit():
     gfw.world.clear_all()
-
+    global bg_music, menu_music
+    del bg_music
+    del menu_music
+    
 
 if __name__ == "__main__":
     gfw.run_main()

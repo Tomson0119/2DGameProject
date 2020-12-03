@@ -76,7 +76,7 @@ class DeathState:
     def enter(self, collision=0):
         self.time = 0
         self.anim = 0
-
+        self.enemy.attacked_music.play()
         if abs(collision) == 2:
             collision = collision // 2
         if collision == 1:
@@ -176,6 +176,11 @@ class Goblin:
         self.strength = 1
         self.attacked = False
         self.active = False
+        self.init_music()
+
+    def init_music(self):
+        self.attacked_music = load_wav(res('sound/attacked.wav'))
+        self.attacked_music.set_volume(3)
 
     def set_state(self, clazz):
         if self.state is not None:

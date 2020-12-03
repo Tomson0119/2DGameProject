@@ -39,8 +39,8 @@ def enter():
     heart = ImageObject('item/heart.png', (32, get_canvas_height() - 32), 64)
 
     color = [(255, 255, 255), (255, 0, 0), (0, 0, 0), (255, 255, 255)]
-    init = [(140, -270, 100, "game over"), (140, -280, 110, "game over"),
-            (50, -150, -75, "restart to enter"), (50, -155, -70, "restart to enter")]
+    init = [(140, -290, 100, "game over"), (140, -300, 110, "game over"),
+            (50, -180, -75, "restart to enter"), (50, -185, -70, "restart to enter")]
 
     global MENU
     MENU = []
