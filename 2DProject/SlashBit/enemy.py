@@ -36,7 +36,7 @@ class IdleState:
         else:
             self.anim = 0
 
-        #sself.update_delta()
+        self.update_delta()
 
         # check boundary with tiles
         check_left(self.enemy)
@@ -76,7 +76,7 @@ class DeathState:
     def enter(self, collision=0):
         self.time = 0
         self.anim = 0
-        move_back = 0
+
         if abs(collision) == 2:
             collision = collision // 2
         if collision == 1:
@@ -117,6 +117,9 @@ class DeathState:
         self.enemy.delta = dx, dy
         move_obj(self.enemy, self.enemy.move_speed)
 
+        check_left(self.enemy)
+        check_right(self.enemy)
+
     def draw(self):
         self.enemy.draw_ex(self.anim, 3)
 
@@ -148,9 +151,6 @@ class FallingState:
 
         # collision check with tiles
         check_below(self.enemy)
-        check_left(self.enemy)
-        check_right(self.enemy)
-        check_above(self.enemy)
 
         if check_below(self.enemy):
             self.enemy.set_state(self.enemy.idle)
@@ -175,6 +175,7 @@ class Goblin:
         self.tile_bound = -100, -100, -100, -100
         self.strength = 1
         self.attacked = False
+        self.active = False
 
     def set_state(self, clazz):
         if self.state is not None:
@@ -186,6 +187,9 @@ class Goblin:
         pass
 
     def update(self):
+        if not self.active:
+            return
+
         self.state.update()
 
         left, foot, right, _ = self.get_bb()
@@ -231,3 +235,48 @@ class Goblin:
             return
         self.set_state(self.death)
         self.state.enter(collision)
+
+    def move(self, dx):
+        x, y = self.pos
+        x += dx
+        self.pos = x, y
+        if x < -self.size:
+            gfw.world.remove(self)
+
+    def activate(self):
+        self.active = True
+
+
+class Dragon(Goblin):
+    IDLE, FLY, DEATH = range(3)
+    BB_RECT = [
+        (-85, -70, 66, 72),
+        (-86, -70, 110, 68),
+        (-88, -80, 110, -20)
+    ]
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.image = gfw.image.load(res(CH_DIR + 'dragon_animation_sheet.png'))
+        self.life = 9
+        self.strength = 2
+        self.size = 80
+
+    def get_bb(self):
+        index = 0
+        if self.state in [self.idle, self.fall]:
+            if self.delta[0] != 0:
+                index = Dragon.FLY
+            else:
+                index = Dragon.IDLE
+        elif self.state == self.death:
+            index = Dragon.DEATH
+        left, bottom, right, top = Dragon.BB_RECT[index]
+        x, y = self.pos
+
+        if self.isLeft:
+            left *= -1
+            right *= -1
+            left, right = right, left
+        bb = x + left, y + bottom, x + right, y + top
+        return bb
