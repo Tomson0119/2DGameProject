@@ -28,6 +28,8 @@ class Tile:
 
     def move(self, dx):
         self.left += dx
+        if self.left < -self.size:
+            gfw.world.remove(self)
 
 
 class Heart(Tile):
@@ -46,6 +48,14 @@ class Potion(Tile):
         elif color == 'blue':
             self.name = 'BluePotion'
             self.image = gfw.image.load(gobj.res(ITEM_DIR + 'potion_blue.png'))
+        self.init(left, bottom)
+        self.size = 64
+
+
+class Key(Tile):
+    def __init__(self, left, bottom):
+        self.name = 'Key'
+        self.image = gfw.image.load(gobj.res(ITEM_DIR + 'key.png'))
         self.init(left, bottom)
         self.size = 64
 
