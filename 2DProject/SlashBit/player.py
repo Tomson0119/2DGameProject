@@ -9,15 +9,8 @@ CH_DIR = 'character/'
 class IdleState:
     BB_RECT = (-33, -48, 33, 43)
 
-    @staticmethod
-    def get(player):
-        if not hasattr(IdleState, 'singleton'):
-            IdleState.singleton = IdleState()
-            IdleState.singleton.player = player
-        return IdleState.singleton
-
-    def __init__(self):
-        self.player = None
+    def __init__(self, Player):
+        self.player = Player
         self.time = 0
         self.anim = 0
         self.jump_speed = 16
@@ -49,9 +42,9 @@ class IdleState:
         elif pair == (SDL_KEYDOWN, SDLK_UP):
             self.move_delta(0, self.jump_speed)
         elif pair == (SDL_KEYDOWN, SDLK_DOWN):
-            self.player.set_state(CrouchState)
+            self.player.set_state(self.player.crouch)
         elif pair == (SDL_KEYDOWN, SDLK_z):
-            self.player.set_state(AttackState)
+            self.player.set_state(self.player.attack)
 
     def update(self):
         self.time += gfw.delta_time
@@ -100,15 +93,8 @@ class IdleState:
 class CrouchState:
     BB_RECT = (-27, -48, 39, 28)
 
-    @staticmethod
-    def get(player):
-        if not hasattr(CrouchState, 'singleton'):
-            CrouchState.singleton = CrouchState()
-            CrouchState.singleton.player = player
-        return CrouchState.singleton
-
-    def __init__(self):
-        self.player = None
+    def __init__(self, Player):
+        self.player = Player
         self.time = 0
         self.anim = 0
 
@@ -122,7 +108,7 @@ class CrouchState:
     def handle_event(self, e):
         self.player.handle_event_ex(e)
         if (e.type, e.key) == (SDL_KEYUP, SDLK_DOWN):
-            self.player.set_state(IdleState)
+            self.player.set_state(self.player.idle)
 
     def update(self):
         self.time += gfw.delta_time
@@ -138,25 +124,18 @@ class CrouchState:
 class AttackState:
     BB_RECT = (-27, -48, 100, 40)
 
-    @staticmethod
-    def get(player):
-        if not hasattr(AttackState, 'singleton'):
-            AttackState.singleton = AttackState()
-            AttackState.singleton.player = player
-        return AttackState.singleton
-
-    def __init__(self):
-        self.player = None
+    def __init__(self, Player):
+        self.player = Player
         self.time = 0
         self.anim = 0
 
     def enter(self):
         self.time = 0
         self.anim = 0
-        self.player.Attack = True
+        self.player.Attacking = True
 
     def exit(self):
-        self.player.Attack = False
+        self.player.Attacking = False
 
     def handle_event(self, e):
         self.player.handle_event_ex(e)
@@ -167,7 +146,7 @@ class AttackState:
         frame = self.time * 10
         self.anim = int(frame) % 4
         if self.anim == 3:
-            self.player.set_state(IdleState)
+            self.player.set_state(self.player.idle)
 
     def draw(self):
         self.player.draw_ex(self.anim, 3)
@@ -176,15 +155,8 @@ class AttackState:
 class DeathState:
     BB_RECT = (-55, -50, 35, 4)
 
-    @staticmethod
-    def get(player):
-        if not hasattr(DeathState, 'singleton'):
-            DeathState.singleton = DeathState()
-            DeathState.singleton.player = player
-        return DeathState.singleton
-
-    def __init__(self):
-        self.player = None
+    def __init__(self, Player):
+        self.player = Player
         self.time = 0
         self.anim = 0
 
@@ -219,7 +191,7 @@ class DeathState:
         else:
             dx = 0
             if self.player.life > 0:
-                self.player.set_state(IdleState)
+                self.player.set_state(self.player.idle)
 
         self.player.delta = dx, dy
 
@@ -237,15 +209,8 @@ class DeathState:
 class FallingState:
     BB_RECT = (-31, -48, 35, 49)
 
-    @staticmethod
-    def get(player):
-        if not hasattr(FallingState, 'singleton'):
-            FallingState.singleton = FallingState()
-            FallingState.singleton.player = player
-        return FallingState.singleton
-
-    def __init__(self):
-        self.player = None
+    def __init__(self, Player):
+        self.player = Player
         self.time = 0
         self.anim = 3
 
@@ -273,18 +238,22 @@ class FallingState:
         check_above(self.player)
 
         if check_below(self.player):
-            self.player.set_state(IdleState)
+            self.player.set_state(self.player.idle)
 
     def draw(self):
         self.player.draw_ex(self.anim, 4)
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, x, y):
+        self.idle = IdleState(self)
+        self.crouch = CrouchState(self)
+        self.attack = AttackState(self)
+        self.fall = FallingState(self)
+        self.death = DeathState(self)
         self.image = gfw.image.load(res(CH_DIR + 'soldier_animation_sheet.png'))
-        self.state = None
-        self.set_state(IdleState)
-        self.pos = 200, 200
+        self.state = self.idle
+        self.pos = x, y
         self.delta = 0, 0
         self.move_speed = 6
         self.size = 72
@@ -292,22 +261,24 @@ class Player:
         self.life = 5
         self.tile_bound = 0, -100, -100, -100
         self.strength = 1
-        self.Attack = False
+        self.Attacking = False
         self.attacked = False
+        self.active = True
 
     def set_state(self, clazz):
         if self.state is not None:
             self.state.exit()
-        self.state = clazz.get(self)
+        self.state = clazz
         self.state.enter()
 
     def handle_event(self, e):
-        self.state.handle_event(e)
+        if self.active:
+            self.state.handle_event(e)
 
     def handle_event_ex(self, e):
         pair = (e.type, e.key)
 
-        state = IdleState.get(self)
+        state = self.idle
         if pair == (SDL_KEYUP, SDLK_RIGHT):
             state.right_pressed = False
         elif pair == (SDL_KEYUP, SDLK_LEFT):
@@ -319,13 +290,22 @@ class Player:
             state.right_pressed = True
 
     def update(self):
+        if not self.active:
+            return
+
         self.state.update()
 
         left, foot, right, _ = self.get_bb()
         self.tile_bound = get_collision_bound(self.pos)
         if foot > self.tile_bound[3]:
             if self.life > 0:
-                self.set_state(FallingState)
+                self.set_state(self.fall)
+
+    def is_dead(self):
+        if self.life <= 0:
+            return True
+        else:
+            return False
 
     def draw(self):
         self.state.draw()
@@ -355,7 +335,7 @@ class Player:
         self.attacked = value
         if not value:
             return
-        self.set_state(DeathState)
+        self.set_state(self.death)
         self.state.enter(collision)
 
     def stepped_on(self):
@@ -379,5 +359,13 @@ class Player:
     def increase_speed(self):
         if self.move_speed < 10:
             self.move_speed += 1
+
+    def move(self, dx):
+        x, y = self.pos
+        x += dx
+        self.pos = x, y
+
+    def diactivate(self):
+        self.active = False
 
 
