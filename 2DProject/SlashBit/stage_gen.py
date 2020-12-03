@@ -5,13 +5,13 @@ import object
 import gobj
 from enemy import *
 
-UNIT_PER_LINE = 70
+UNIT_PER_LINE = 71
 SCREEN_LINES = 10
 BLOCK_SIZE = 96
 
 lines = []
 TILES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':',
-         ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G']
+         ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F']
 
 
 def load(file):
@@ -82,6 +82,11 @@ def create_object(ch, x, y):
         x -= BLOCK_SIZE // 2 - 16
         obj = Potion('blue', x, y)
         gfw.world.add(gfw.layer.item, obj)
+    elif ch == 'k':
+        y -= BLOCK_SIZE // 2 + 32
+        x -= BLOCK_SIZE // 2 - 16
+        obj = Key(x, y)
+        gfw.world.add(gfw.layer.item, obj)
     elif ch == 's':
         y -= BLOCK_SIZE // 2 + 55
         x -= BLOCK_SIZE // 2
@@ -89,4 +94,7 @@ def create_object(ch, x, y):
         gfw.world.add(gfw.layer.spike, obj)
     elif ch == 'e':
         obj = Goblin(x, y)
+        gfw.world.add(gfw.layer.enemy, obj)
+    elif ch == 'd':
+        obj = Dragon(x, y)
         gfw.world.add(gfw.layer.enemy, obj)
