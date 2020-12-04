@@ -10,11 +10,13 @@ __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과�
   - Event : 위, 아래 키로 메뉴 선택, Enter로 진입 (Start : 선택화면 진입, Exit : 종료), ESC로 종료   
 
 * __Character Select__
- - 주인공을 선택하는 화면입니다.
- - 좌, 우 키로 캐릭터를 선택하며, 활성화된 캐릭터는 움직이는 애니메이션을 보여줍니다.
- - Event : 좌, 우 키로 캐릭터 선택, Enter로 진입, ESC로 메인 메뉴로 돌아가기
+![캐릭터 선택](https://user-images.githubusercontent.com/70787160/101155142-0c8e0780-366a-11eb-887d-f99674fbdaa8.png)
+  - 주인공을 선택하는 화면입니다.
+  - 좌, 우 키로 캐릭터를 선택하며, 활성화된 캐릭터는 움직이는 애니메이션을 보여줍니다.
+  - Event : 좌, 우 키로 캐릭터 선택, Enter로 진입, ESC로 메인 메뉴로 돌아가기
 
 * __Game State__
+![게임화면](https://user-images.githubusercontent.com/70787160/101155145-0dbf3480-366a-11eb-952f-7847d9d19f91.png)
   - 게임을 시작하고 나면 진행되는 상태
   - 밟을 수 있는 타일을 스테이지 전역에 그립니다.(스테이지는 텍스트 파일로 제작)
   - 몬스터와 플레이어, 아이템이 표시됩니다. 몬스터는 랜덤하게 좌우로 움직입니다.
@@ -32,14 +34,11 @@ __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과�
 * 게임에서 활용한 수업에서 배운 기술 : 수평으로 움직이는 배경화면, 텍스트 파일로 스테이지 제작, State를 활용한 플레이어 움직임
 바운드박스를 통한 충돌체크, 비슷한 오브젝트 클래스 상속
 
-# 게임 흐름
-![게임 흐름](https://user-images.githubusercontent.com/70787160/95533692-d42dcc80-0a1e-11eb-8e10-44960f8c3475.png)
-
 # 개발 범위
-![개발 범위](https://user-images.githubusercontent.com/70787160/101151597-398beb80-3665-11eb-90ae-2fb8db20abe0.png)
+![개발 범위](https://user-images.githubusercontent.com/70787160/101155153-0f88f800-366a-11eb-88a2-620e12d0ed0d.png)
 
 # 개발 계획
-![개발 계획](https://user-images.githubusercontent.com/70787160/101151608-3bee4580-3665-11eb-8e44-1f8a495cc837.png)
+![개발 계획](https://user-images.githubusercontent.com/70787160/101155160-10ba2500-366a-11eb-9e7e-0537c774b838.png)
 
 # Commit 횟수
 ![커밋](https://user-images.githubusercontent.com/70787160/101151590-37c22800-3665-11eb-8403-5353bcfdfea7.png)
