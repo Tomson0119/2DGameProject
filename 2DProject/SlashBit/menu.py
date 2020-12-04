@@ -20,7 +20,7 @@ class Menu:
         else:
             _, rem = divmod(time, 3600)
             minutes, seconds = divmod(rem, 60)
-            str = self.sentence + "{:0} minute  {:0} second".format(int(minutes), int(seconds))
+            str = self.sentence + "{:0} second".format(int(seconds))
             self.font.draw(*self.pos, str, self.color)
 
 
