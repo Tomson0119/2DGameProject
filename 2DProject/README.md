@@ -1,40 +1,36 @@
 # Game Title
 __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과하고 보스를 처치하는 짧은 게임입니다.
-게임 스펠렁키를 보고 아이디어를 생각하였습니다. 장애물과 몬스터의 공격으로부터 제한된 목숨으로 생존하여야 합니다.
-
-![image](https://user-images.githubusercontent.com/70787160/99893430-8d8cec80-2cc3-11eb-9dc9-41f23795fb32.png)
+장애물과 몬스터의로부터 제한된 목숨으로 생존하여야 합니다.
 
 # Game Scene
 * __Main Menu__
+![image](https://user-images.githubusercontent.com/70787160/99893430-8d8cec80-2cc3-11eb-9dc9-41f23795fb32.png)
   - 게임 시작 시 나오는 메인메뉴
-  - 게임 타이틀과 게임 시작 버튼 (Press Spacebar)을 표시
-  - Resource : image = background, text(font)
-  - Events : Spacebar = change to game state, ESC = exit program.
+  - 게임 타이틀과 게임 시작 버튼 (Start, Exit)을 표시
+  - Event : 위, 아래 키로 메뉴 선택, Enter로 진입 (Start : 선택화면 진입, Exit : 종료), ESC로 종료   
 
-* __Stages__ (1, 2, 3, Boss)
+* __Character Select__
+ - 주인공을 선택하는 화면입니다.
+ - 좌, 우 키로 캐릭터를 선택하며, 활성화된 캐릭터는 움직이는 애니메이션을 보여줍니다.
+ - Event : 좌, 우 키로 캐릭터 선택, Enter로 진입, ESC로 메인 메뉴로 돌아가기
+
+* __Game State__
   - 게임을 시작하고 나면 진행되는 상태
-  - 남은 목숨, 진행 시간, 필드, 몬스터(보스), 발사체, 캐릭터, 아이템(HP up, damage up, speed up), 문(stage end), 시간(timer)
-  - Stage end -> 새로운 맵을 로드한다. (보스맵까지 총 4개)
-  - Resource : image = background, tiles, character, monsters, projectiles, HP, items(apple, sword, shoes), boss
-             sound = player attack, player death, jump, enemy attack, enemy death, boss attack, boss death, win sound
-  - Animation = player move, player attack, monster(boss) move, projectiles move.
-  - Events : move(left, right), jump(up), attack(shift key), enter door (spacebar)
-  - 상황에 따라 각 스테이지를 각각의 Scene으로 구현할 수도 있음.
-  - HP가 0이 되거나 boss의 HP가 0이 되면 Result page로 변경
-  - 몬스터의 위치, 아이템의 위치는 랜덤으로 구현
-
-* __Result page__ (death)
-  - 게임에서 죽거나 보스를 물리치고 게임이 끝났을 때 표시해주는 결과창
-  - 게임에서 경과한 시간을 표시. 죽어있는 캐릭터의 모습, 재시작, 게임 나가기
-  - Restart -> 처음부터 다시시작, back to menu -> 메인메뉴로 돌아가기
-  - Resource : image = character death, text(font)
-  - Events : UP key, Down key to choose scene(restart, main menu), select scene (spacebar)
-  - restart -> time, hp reset.
+  - 밟을 수 있는 타일을 스테이지 전역에 그립니다.(스테이지는 텍스트 파일로 제작)
+  - 몬스터와 플레이어, 아이템이 표시됩니다. 몬스터는 랜덤하게 좌우로 움직입니다.
+  - 몬스터에게 닿으면 플레이어는 뒤로 밀려나며 체력이 1 감소합니다.(드래곤은 2 감소)
+  - 플레이어가 공격 중인 상태에서 몬스터에게 닿으면 몬스터의 체력이 플레이어의 공격력만큼 감소합니다.(최대체력 : 3, 보스 : 5)
+  - 아이템과의 충돌이 발생하면 해당 기능을 수행합니다.(빨간포션 : 공력력 증가, 파란포션 : 속도 증가, 하트 : 목숨 1 증가)
+  - 캐릭터가 화면 밖으로 나갈 시 다음 화면으로 전환합니다.(총 화면 : 6)
+  - 캐릭터 사망 시, Game over 문구를 띄우고, 승리할 시 Game Clear 문구를 화면에 표시합니다.
+  - 지금까지 걸린 시간을 화면 우하단에 보여줍니다.
+  - 클리어 조건은 마지막 화면에서 플레이어가 열쇠를 먹는 것입니다.
+  - 플레이어가 가시에 닿으면 플레이어는 곧바로 사망합니다.
+  - Event : 위(점프), 좌우(이동), 아래(숙이기), Z(공격), Enter(재시작, 게임오버(클리어) 시), ESC(캐릭터 선택 창으로 나가기)
 
 # Skills
-* 다른 수업에서 배운 기술 : 랜덤함수
-* 2D게임프로그래밍 : 적 AI 구현, 충돌 검사, 시간 측정, 애니메이션, 사운드, 이미지의 페이드 소멸(점점 흐려짐) 등
-* 어려운 기술 : 맵의 타일들을 랜덤하게 재배치하는 기술(출구까지 막힌 길이 없어야 한다), 지진효과(화면이 흔들리는 효과)
+* 게임에서 활용한 수업에서 배운 기술 : 수평으로 움직이는 배경화면, 텍스트 파일로 스테이지 제작, State를 활용한 플레이어 움직임
+바운드박스를 통한 충돌체크, 비슷한 오브젝트 클래스 상속
 
 # 게임 흐름
 ![게임 흐름](https://user-images.githubusercontent.com/70787160/95533692-d42dcc80-0a1e-11eb-8e10-44960f8c3475.png)
