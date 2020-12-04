@@ -3,7 +3,7 @@ import gobj
 from pico2d import *
 from background import *
 from menu import Menu
-import game_state
+import select_state
 
 index = 0
 
@@ -73,7 +73,7 @@ def handle_event(e):
         if index == 1:
             gfw.quit()
         else:
-            gfw.push(game_state)
+            gfw.push(select_state)
 
 
 def exit():
@@ -81,7 +81,7 @@ def exit():
     global bg_music, menu_music
     del bg_music
     del menu_music
-    
+
 
 if __name__ == "__main__":
     gfw.run_main()

@@ -12,9 +12,11 @@ STAGE_GEN = True
 START_TIME = 0
 END_TIME = 0
 
+ImageName = None
 
-def enter():
-    gfw.world.init(['bg', 'cloud', 'tile', 'spike', 'item', 'player', 'enemy', 'ui'])
+
+def enter(select=None):
+    gfw.world.init(['bg', 'cloud', 'tile', 'spike', 'item', 'player', 'enemy'])
 
     global START_TIME, END_TIME
     START_TIME = get_time()
@@ -27,8 +29,12 @@ def enter():
     cloud = HorzScrollBackground('cloud.png', 20, 130)
     gfw.world.add(gfw.layer.cloud, cloud)
 
-    global player
-    player = Player(200, 200)
+    global player, imageName
+    if select == 1:
+        imageName = 'soldier_animation_sheet.png'
+    elif select == 2:
+        imageName = 'princess_animation_sheet.png'
+    player = Player(200, 200, imageName)
     gfw.world.add(gfw.layer.player, player)
 
     # tiles
@@ -50,8 +56,8 @@ def enter():
         MENU.append(menu)
 
     global TIME_STR
-    TIME_STR = [Menu('ThaleahFat.ttf', 50, (0, 0, 0), "", 225, -335),
-                Menu('ThaleahFat.ttf', 50, (255, 255, 255), "", 220, -330)]
+    TIME_STR = [Menu('ThaleahFat.ttf', 50, (0, 0, 0), "", 425, -335),
+                Menu('ThaleahFat.ttf', 50, (255, 255, 255), "", 420, -330)]
 
     stage_gen.update(-250 * gfw.delta_time)
 
@@ -78,7 +84,6 @@ def update():
 
 def draw():
     gfw.world.draw()
-    gobj.draw_collision_box()
     dx = 0
     for life in range(player.life):
         heart.draw(dx)
@@ -109,8 +114,6 @@ def handle_event(e):
         if game_over or game_clear:
             exit()
             enter()
-    elif event == (SDL_KEYDOWN, SDLK_a):
-        player.decrease_life(death=True)
 
     player.handle_event(e)
 

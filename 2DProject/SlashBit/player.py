@@ -248,13 +248,13 @@ class FallingState:
 
 
 class Player:
-    def __init__(self, x, y):
+    def __init__(self, x, y, imageName):
         self.idle = IdleState(self)
         self.crouch = CrouchState(self)
         self.attack = AttackState(self)
         self.fall = FallingState(self)
         self.death = DeathState(self)
-        self.image = gfw.image.load(res(CH_DIR + 'soldier_animation_sheet.png'))
+        self.image = gfw.image.load(res(CH_DIR + imageName))
         self.state = self.idle
         self.pos = x, y
         self.delta = 0, 0

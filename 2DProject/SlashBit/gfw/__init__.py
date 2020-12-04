@@ -23,7 +23,7 @@ def run(start_state):
     running = True
     stack = [start_state]
 
-    open_canvas(WINDOW_WIDTH, WINDOW_HEIGHT, False, False)
+    open_canvas(WINDOW_WIDTH, WINDOW_HEIGHT, False, True)
 
     start_state.enter()
 
@@ -65,12 +65,15 @@ def change(state):
     state.enter()
 
 
-def push(state):
+def push(state, select=None):
     global stack
     if len(stack) > 0:
         stack[-1].exit()
     stack.append(state)
-    state.enter()
+    if select is not None:
+        state.enter(select)
+    else:
+        state.enter()
 
 
 def pop():
