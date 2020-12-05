@@ -2,6 +2,11 @@
 __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과하고 보스를 처치하는 짧은 게임입니다.
 장애물과 몬스터의로부터 제한된 목숨으로 생존하여야 합니다.
 
+# 발표 영상
+1차 : https://youtu.be/17vTiZecVF8
+중간 : https://youtu.be/LsQMcyn26JM
+최종 : https://youtu.be/O_Fl0f4_-dE
+
 # Game Scene
 * __Main Menu__
 ![image](https://user-images.githubusercontent.com/70787160/99893430-8d8cec80-2cc3-11eb-9dc9-41f23795fb32.png)
