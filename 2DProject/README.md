@@ -3,9 +3,9 @@ __SlashBit__ : 2D 공간에서 몬스터를 처치하며 스테이지를 통과�
 장애물과 몬스터의로부터 제한된 목숨으로 생존하여야 합니다.
 
 # 발표 영상
-1차 : https://youtu.be/17vTiZecVF8
-중간 : https://youtu.be/LsQMcyn26JM
-최종 : https://youtu.be/O_Fl0f4_-dE
+ - 1차 : https://youtu.be/17vTiZecVF8
+ - 중간 : https://youtu.be/LsQMcyn26JM
+ - 최종 : https://youtu.be/O_Fl0f4_-dE
 
 # Game Scene
 * __Main Menu__
