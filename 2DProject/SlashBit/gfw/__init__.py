@@ -9,7 +9,7 @@ WINDOW_HEIGHT = 720
 
 running = True
 stack = None
-interval = 0.0006
+interval = 0.01
 delta_time = 0
 
 
